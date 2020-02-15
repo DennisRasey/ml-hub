@@ -54,7 +54,7 @@ docker run \
     -p 8080 \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -v jupyterhub_data:/data \
-    mltooling/ml-hub:latest
+    drasey/ml-hub:latest
 ```
 
 To persist the hub data, such as started workspaces and created users, mount a directory to `/data`.
@@ -136,7 +136,7 @@ JupyterHub and the used Spawner are configured via a `config.py` file as stated 
 *Important:* When setting properties for the Spawner, please use the general form `c.Spawner.` instead of `c.DockerSpawner.`, `c.KubeSpawner.` etc. so that they are merged with default values accordingly.
 
 Our custom Spawners support the additional configurations:
--  `c.Spawner.workspace_images` - set the images that appear in the dropdown menu when a new named server should be created, e.g. `c.Spawner.workspace_images = [c.Spawner.image, "mltooling/ml-workspace-gpu:0.8.7", "mltooling/ml-workspace-r:0.8.7"]`
+-  `c.Spawner.workspace_images` - set the images that appear in the dropdown menu when a new named server should be created, e.g. `c.Spawner.workspace_images = [c.Spawner.image ]`
 
 Following settings should probably not be overriden:
 - `c.Spawner.prefix` and `c.Spawner.name_template` - if you change those, check whether your SSH environment variables permit those names a target. Also, think about setting `c.Authenticator.username_pattern` to prevent a user having a username that is also a valid container name.
@@ -147,7 +147,7 @@ An examplary custom config file could look like this:
 ```python
 # jupyterhub_user_config.py
 c.Spawner.environment = {"FOO": "BAR"}
-c.Spawner.workspace_images = ["mltooling/ml-workspace-r:0.8.7"]
+c.Spawner.workspace_images = ["drasey/ml-workspace:latest"]
 ```
 
 **Docker-local**
