@@ -14,9 +14,9 @@ RUN \
    apt-get install -y --no-install-recommends \
       build-essential libssl-dev zlib1g-dev \
       git \
-      #python3 \
+      python3 \
       python3-dev \
-      #python3-pip \
+      python3-pip \
       python3-setuptools \
       python3-wheel \
       libssl-dev \
@@ -97,7 +97,7 @@ RUN \
    pip install --no-cache git+https://github.com/ryanlovett/imagespawner && \
    pip install --no-cache /mlhubspawner && \
    rm -r /mlhubspawner && \
-   pip install tornado==5.1.1 && \
+   pip install --no-cache tornado==5.1.1 && \
    # Cleanup
    clean-layer.sh
 
@@ -224,4 +224,5 @@ CMD ["/bin/bash", "/resources/docker-entrypoint.sh"]
 
 # The port on which nginx listens and checks whether it's http(s) or ssh traffic
 EXPOSE 8080
+EXPOSE 8000
  
