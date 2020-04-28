@@ -1,0 +1,63 @@
+stages:
+  - build_push
+
+
+########################################################################
+########################################################################
+# The following environment variables should be defined within the
+# project's CI/CD vars.
+########################################################################
+########################################################################
+.vars_staging: &vars_staging
+  REPOSITORY: $STAGING_REPOSITORY
+  AWS_ACCESS_KEY_ID: $STAGING_AWS_ACCESS_KEY_ID
+  AWS_SECRET_ACCESS_KEY: $STAGING_AWS_SECRET_ACCESS_KEY
+  AWS_REGION: $STAGING_AWS_REGION
+
+.vars_production: &vars_production
+  REPOSITORY: $PRODUCTION_REPOSITORY
+  AWS_ACCESS_KEY_ID: $PRODUCTION_AWS_ACCESS_KEY_ID
+  AWS_SECRET_ACCESS_KEY: $PRODUCTION_AWS_SECRET_ACCESS_KEY
+  AWS_REGION: $PRODUCTION_AWS_REGION
+
+
+###########################
+# Build
+###########################
+.build_common:
+  image: mltooling/ssh-proxy:0.1.11
+  tags:
+    - docker
+  only:
+    - master
+  services:
+    - mltooling/ssh-proxy:0.1.11
+  stage: build_push
+  before_script:
+    - mkdir -p ~/.ssh
+    - |
+      cat > ~/.ssh/config << EOF
+      Host *
+          StrictHostKeyChecking no
+          IdentityFile ~/.ssh/id_rsa
+      EOF
+    - ssh-keyscan gitlab.tooling.cbre.io > ~/.ssh/known_hosts
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+  script:
+    - docker build -t $REPOSITORY:$CI_COMMIT_SHORT_SHA -t $REPOSITORY:latest .
+    - $(aws ecr get-login --no-include-email --region $AWS_REGION)
+    - docker push $REPOSITORY  # Will implicitly push all tags with image
+
+build_staging:
+  when: manual
+  variables:
+    <<: *vars_staging
+  extends: .build_common
+
+build_production:
+  when: manual
+  variables:
+    <<: *vars_production
+  extends: .build_common
+
