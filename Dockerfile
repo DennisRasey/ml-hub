@@ -1,4 +1,4 @@
-FROM mltooling/ssh-proxy:0.1.11
+FROM ubuntu:18.04
 
 WORKDIR /
 
@@ -7,8 +7,18 @@ WORKDIR /
 # Set Debian Frontend to 'noninteractive' as needed for some programs/installations (e.g. sslh does not ask for mode during installation)
 ENV \
    DEBIAN_FRONTEND="noninteractive" \
+   _RESOURCES_PATH="/resources" \
    _SSL_RESOURCES_PATH=$_RESOURCES_PATH/ssl
 
+COPY resources/clean-layer.sh /usr/bin/clean-layer.sh
+
+RUN \
+    mkdir $_RESOURCES_PATH && \
+    chmod ug+rwx $_RESOURCES_PATH && \
+    chmod a+rwx /usr/bin/clean-layer.sh
+
+
+### INSTALL BASICS ###
 RUN \
    apt-get update && \
    apt-get install -y --no-install-recommends \
@@ -25,10 +35,7 @@ RUN \
       sqlite3 \
       curl \
       dnsutils \
-      $(bash -c 'if [[ $JUPYTERHUB_VERSION == "git"* ]]; then \
-        # workaround for https://bugs.launchpad.net/ubuntu/+source/nodejs/+bug/1794589
-        echo nodejs=8.10.0~dfsg-2ubuntu0.2 nodejs-dev=8.10.0~dfsg-2ubuntu0.2 npm; \
-      fi') \
+      wget \
       && \
    # Cleanup
    clean-layer.sh
@@ -84,6 +91,9 @@ RUN \
    # Cleanup
    clean-layer.sh
 
+RUN \
+   ln -s /usr/bin/pip3 /usr/bin/pip
+
 ### END BASICS ###
 
 ### MLHUB-SPECIFIC INSTALLATIONS ###
@@ -97,7 +107,7 @@ RUN \
    pip install --no-cache git+https://github.com/ryanlovett/imagespawner && \
    pip install --no-cache /mlhubspawner && \
    rm -r /mlhubspawner && \
-   pip install --no-cache tornado==5.1.1 && \
+   pip install --no-cache tornado && \
    # Cleanup
    clean-layer.sh
 
