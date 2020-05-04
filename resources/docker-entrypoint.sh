@@ -30,7 +30,7 @@ function start_ssh {
     echo "Start SSH Daemon service"
     export SSH_TARGET_LABELS="mlhub.origin=$HUB_NAME"
     # Run ssh-bastion image entrypoint
-    nohup python $_RESOURCES_PATH/start_ssh.py &
+    #nohup python $_RESOURCES_PATH/start_ssh.py &
 }
 
 function start_jupyterhub {
@@ -44,9 +44,9 @@ function start_http_proxy {
     configurable-http-proxy $incoming_args &
 }
 
-if [ "${START_SSH}" == true ]; then
-  start_ssh
-fi
+#if [ "${START_SSH}" == true ]; then
+#  start_ssh
+#fi
 
 if [ "${START_JHUB}" == true ]; then
   start_jupyterhub
@@ -77,14 +77,14 @@ fi
 # Otherwise it loops forever, waking up every 60 seconds
 # If the greps find anything, they exit with 0 status (stored in $?)
 while sleep 60; do
-  if [ "${START_SSH}" == true ]; then
-    ps aux |grep sshd |grep -q -v grep
-    PROCESS_STATUS=$?
-    if [ $PROCESS_STATUS -ne 0 ]; then
-      echo "SSH Daemon stopped. Restart it..."
-      start_ssh
-    fi
-  fi
+#  if [ "${START_SSH}" == true ]; then
+#    ps aux |grep sshd |grep -q -v grep
+#    PROCESS_STATUS=$?
+#    if [ $PROCESS_STATUS -ne 0 ]; then
+#      echo "SSH Daemon stopped. Restart it..."
+#      start_ssh
+#    fi
+#  fi
 
   if [ "${START_JHUB}" == true ]; then
     ps aux |grep "jupyterhub " |grep -q -v grep
