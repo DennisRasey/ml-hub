@@ -54,7 +54,7 @@ docker run \
     -p 8080 \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -v jupyterhub_data:/data \
-    gitlab.tooling.cbre.io:4567/dockerfiles/ml-hub:latest
+    drasey/ml-hub/ml-hub:latest
 ```
 
 To persist the hub data, such as started workspaces and created users, mount a directory to `/data`.
@@ -147,7 +147,7 @@ An examplary custom config file could look like this:
 ```python
 # jupyterhub_user_config.py
 c.Spawner.environment = {"FOO": "BAR"}
-c.Spawner.workspace_images = ["gitlab.tooling.cbre.io:4567/dockerfiles/ml-hub:latest"]
+c.Spawner.workspace_images = ["drasey/ml-hub/ml-hub:latest"]
 ```
 
 **Docker-local**
