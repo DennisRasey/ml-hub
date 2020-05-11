@@ -22,21 +22,23 @@ rm -rf /tmp/* /var/tmp/* $HOME/.cache/* /var/cache/apt/*
 # Remove apt lists
 rm -rf /var/lib/apt/lists/* /etc/apt/sources.list.d/*
 
+export CONDA_DIR=/opt/conda
+
 # Clean conda
-if [ -x "$(command -v conda)" ]; then
+if [ -x "$(command -v $CONDA_DIR/bin/conda)" ]; then
     # Full Conda Cleanup
-    conda clean --all -f -y
-    # Remove source cache files
-    conda build purge-all
-    if [ -d $CONDA_DIR ]; then
-        # Cleanup python bytecode files - not needed: https://jcrist.github.io/conda-docker-tips.html
-        find $CONDA_DIR -type f -name '*.pyc' -delete
-        find $CONDA_DIR -type l -name '*.pyc' -delete
-    fi
+    $CONDA_DIR/bin/conda clean --all -f -y
+    $CONDA_DIR/bin/conda clean -y --packages
+    $CONDA_DIR/bin/conda build purge-all
+    # Cleanup python bytecode files - not needed: https://jcrist.github.io/conda-docker-tips.html
+    find $CONDA_DIR -type f -name '*.pyc' -delete
+    find $CONDA_DIR -type l -name '*.pyc' -delete
+    find $CONDA_DIR/ -follow -type f -name '*.a' -delete
+    find $CONDA_DIR/ -follow -type f -name '*.js.map' -delete
 fi
 
 # Clean npm
 if [ -x "$(command -v npm)" ]; then
     npm cache clean --force
-    rm -rf $HOME/.npm/* $HOME/.node-gyp/*
+    rm -rf $HOME/.npm/ $HOME/.node-gyp/
 fi
