@@ -22,16 +22,16 @@ RUN \
 RUN \
    apt-get update && \
    apt-get install -y --no-install-recommends \
-      build-essential libssl-dev zlib1g-dev \
+      build-essential \
+      libssl-dev \
+      zlib1g-dev \
       git \
       python3 \
       python3-dev \
       python3-pip \
       python3-setuptools \
       python3-wheel \
-      libssl-dev \
       libcurl4-openssl-dev \
-      build-essential \
       sqlite3 \
       curl \
       dnsutils \
@@ -235,4 +235,4 @@ CMD ["/bin/bash", "/resources/docker-entrypoint.sh"]
 # The port on which nginx listens and checks whether it's http(s) or ssh traffic
 EXPOSE 8080
 EXPOSE 8000
- 
+
