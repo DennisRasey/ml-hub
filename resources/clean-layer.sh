@@ -27,8 +27,7 @@ export CONDA_DIR=/opt/conda
 # Clean conda
 if [ -x "$(command -v $CONDA_DIR/bin/conda)" ]; then
     # Full Conda Cleanup
-    $CONDA_DIR/bin/conda clean --all -f -y
-    $CONDA_DIR/bin/conda clean -y --packages
+    $CONDA_DIR/bin/conda clean --all --packages --force-pkgs-dirs -y
     $CONDA_DIR/bin/conda build purge-all
     # Cleanup python bytecode files - not needed: https://jcrist.github.io/conda-docker-tips.html
     find $CONDA_DIR -type f -name '*.pyc' -delete
